@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"os"
 	"strings"
 	"time"
@@ -104,8 +105,9 @@ func NewOIDCClient(clientID string, clientSecret string, providerURL string) *OI
 func (c *OIDCClient) oauthCallback(w http.ResponseWriter, r *http.Request) {
 	session, _ := c.store.Get(r, "session-name")
 
-	if r.URL.Query().Get("state") != session.Values["state"] {
-		log.Error("state did not match")
+	state := url.QueryEscape(r.URL.Query().Get("state"))
+	if state != session.Values["state"] {
+		log.Error("state did not match: ", state, " vs. ", session.Values["state"])
 		http.Redirect(w, r, "/", http.StatusFound)
 		return
 	}
