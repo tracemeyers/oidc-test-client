@@ -60,7 +60,7 @@ func createContext(from context.Context) context.Context {
 
 func getScopes() []string {
 	scopes := []string{oidc.ScopeOpenID, oidc.ScopeOfflineAccess, "profile", "email"}
-	if es := os.Getenv("OIDC_SCOPES"); es != "" {
+	if es, exists := os.LookupEnv("OIDC_SCOPES"); exists {
 		scopes = strings.Split(es, ",")
 	}
 	return scopes
